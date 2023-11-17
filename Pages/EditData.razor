@@ -1,0 +1,288 @@
+﻿@page "/editdata"
+@using MauiDesktopApplicaton.Data
+@using MauiDesktopApplicaton.EntityModel
+@inject EmployeeController employeeDetails
+@inject LoginController loginController
+@inject NavigationManager NavManager
+<h3>Employee Detail</h3>
+<style>
+
+	a {
+		text-decoration: none;
+		color: black;
+	}
+
+	h1 {
+		position: relative;
+		padding: 0;
+		margin: 0;
+		font-family: "Raleway", sans-serif;
+		font-weight: 300;
+		font-size: 40px;
+		color: #080808;
+		-webkit-transition: all 0.4s ease 0s;
+		-o-transition: all 0.4s ease 0s;
+		transition: all 0.4s ease 0s;
+	}
+
+		h1 span {
+			display: block;
+			font-size: 0.5em;
+			line-height: 1.3;
+		}
+
+		h1 em {
+			font-style: normal;
+			font-weight: 600;
+		}
+
+	.alt-two h1 {
+		text-align: center;
+	}
+
+		.alt-two h1:before {
+			left: 50%;
+			margin-left: -30px;
+		}
+
+	.two h1 {
+		text-transform: capitalize;
+	}
+
+		.two h1:before {
+			position: absolute;
+			left: 45%;
+			bottom: 0;
+			width: 200px;
+			height: 2px;
+			content: "";
+			background-color: #c50000;
+		}
+
+		.two h1 span {
+			font-size: 13px;
+			font-weight: 500;
+			text-transform: uppercase;
+			letter-spacing: 4px;
+			line-height: 3em;
+			padding-left: 0.25em;
+			color: rgba(0, 0, 0, 0.4);
+			padding-bottom: 10px;
+		}
+</style>
+
+
+<div class="container mt-1">
+	<div class="row mt-1">
+		<div class="col-md-8">
+			<div class="card ">
+				<div class="card-body">
+					<div class="form-group row p-2">
+						<label> Employee Name</label>
+						<div class="col-md-9">
+							<select class="form-control" disabled=@isdisable name="Emp_ID" placeholder="" @onchange="selectEmployee">
+								<option>Select a Employee</option>
+								@foreach (var item in employees)
+								{
+									<option value="@item.EmployeeID">@item.FullName</option>
+
+								}
+							</select>
+						</div>
+					</div>
+
+					<form method="post">
+
+						<div class="form-group bg-grey">
+							@*<h2 class="font-800  p-2 border">User Register</h2>*@
+							<hr />
+
+							<div class="form-group row p-2">
+								<label> Employee Name</label>
+								<div class="col-md-9">
+									<input placeholder="" @bind="employeeName" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Password</label>
+								<div class="col-md-9">
+									<input placeholder="" type="password" @bind="Password" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Address </label>
+								<div class="col-md-9">
+									<input placeholder="" @bind="Address" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Email Address </label>
+								<div class="col-md-9">
+									<input placeholder="" type="email" @bind="Email" oninvalid="AbortController" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Contact </label>
+								<div class="col-md-9">
+									<input placeholder="" @bind="Contact" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Designation </label>
+								<div class="col-md-9">
+									<input placeholder="" @bind="Designation" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label>Date od Join </label>
+								<div class="col-md-9">
+									<input placeholder="" type="date" @bind="joinDate" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-2">
+								<label> Department</label>
+								<div class="col-md-9">
+									<select class="form-control" name="Dep_ID" placeholder="" @bind="DepartmentId">
+										<option>Select a Department</option>
+										@foreach (var item in departments)
+										{
+											<option value="@item.DepartmentID">@item.DepartmentName</option>
+
+										}
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group row p-3">
+								<div class="col-md-3"></div>
+								<div class="col-md-9">
+
+									<button class="btn btn-primary" @onclick="upadteUser">Save</button>
+									<button class="btn btn-primary" @onclick="deleteEmployee">Delete</button>
+
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	EmployeeDetail employeeDetail = new EmployeeDetail();
+	int employeeId = 0;
+	string employeeName;
+	string Password;
+	string Email;
+	string Contact;
+	string Address;
+	string Designation;
+	int DepartmentId=0;
+	DateTime? joinDate;
+	bool isdisable = false;
+
+	//Update selected employee 
+	private void upadteUser()
+	{
+		if (employeeId > 0)
+		{
+			employeeDetail.EmployeeID = employeeId;
+			employeeDetail.FullName = employeeName;
+			employeeDetail.Password = Password;
+			employeeDetail.Email = Email;
+			employeeDetail.Contact = Contact;
+			employeeDetail.Address = Address;
+			employeeDetail.Designation = Designation;
+			employeeDetail.DateOfJoin = joinDate;
+			if (DepartmentId > 0)
+			{
+				employeeDetail.DepartmentID = DepartmentId;
+			}
+			var result  =employeeDetails.UpdateEmployeeAsync(employeeDetail);
+			if (result)
+			{
+				App.Current.MainPage.DisplayAlert("Saved", "Data Updated", "OK");
+			}
+			else
+			{
+				App.Current.MainPage.DisplayAlert("Saved", "Error in update data!", "OK");
+
+			}
+		}
+	}
+	//Delete selected employee
+	private void deleteEmployee()
+	{
+		if (employeeId > 0)
+		{
+			var result=employeeDetails.DeleteEmployeeAsync(employeeId);
+			if (result)
+			{
+				App.Current.MainPage.DisplayAlert("Delete", "Delete Success", "OK");
+				if (employeeId==loginController._employeeID)
+				{
+					loginController.ResetAll();
+				}
+			}
+			else
+			{
+				 App.Current.MainPage.DisplayAlert("Delete", "Error in delete data!", "OK");
+
+			}
+		}
+	}
+	//Method to fill the info about selected employee by using his employeeId
+	private void selectEmployee(EventArgs eventArgs)
+	{
+		var a = ((Microsoft.AspNetCore.Components.ChangeEventArgs)eventArgs).Value.ToString();
+		if (a != "-1")
+		{
+			employeeId = Convert.ToInt32(a);
+			employeeDetail = employeeDetails.GetEmployeeDetail(employeeId);
+			employeeName = employeeDetail.FullName;
+			Password = employeeDetail.Password;
+			Email = employeeDetail.Email;
+			Contact = employeeDetail.Contact;
+			Address = employeeDetail.Address;
+			Designation = employeeDetail.Designation;
+			DepartmentId = employeeDetail.DepartmentID == null ? 0 : employeeDetail.DepartmentID.Value;
+			joinDate = employeeDetail.DateOfJoin;
+		}
+	}
+	private DepartmentDetail[] departments=new DepartmentDetail[0];
+	private EmployeeDetail[] employees=new EmployeeDetail[0];
+
+	protected override async Task OnInitializedAsync()
+	{  //Check if current component is callled by logined user
+		//if user not login, redirect to login page
+		if (!loginController.IsLoggedIn)
+		{
+			NavManager.NavigateTo("login");
+		}
+		else
+		{
+			departments = await employeeDetails.GetAllDepartmentsAsync();
+			if (!loginController.IsAdmin)
+			{
+				isdisable = true;
+				employeeId = loginController._employeeID;
+				employeeDetail = employeeDetails.GetEmployeeDetail(employeeId);
+				employeeName = employeeDetail.FullName;
+				Password = employeeDetail.Password;
+				Email = employeeDetail.Email;
+				Contact = employeeDetail.Contact;
+				Address = employeeDetail.Address;
+				Designation = employeeDetail.Designation;
+				DepartmentId = employeeDetail.DepartmentID == null ? 0 : employeeDetail.DepartmentID.Value;
+				joinDate = employeeDetail.DateOfJoin;
+			}
+			else
+			{
+				employees = await employeeDetails.GetAllEmployeesAsync();
+			}
+		}
+
+	}
+}

@@ -1,0 +1,145 @@
+﻿@page "/registeruser"
+@using MauiDesktopApplicaton.Data
+@using MauiDesktopApplicaton.EntityModel
+@inject EmployeeController userDetails
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+<h3>New Employee</h3>
+<style>
+
+	a {
+		text-decoration: none;
+		color: black;
+	}
+
+	h1 {
+		position: relative;
+		padding: 0;
+		margin: 0;
+		font-family: "Raleway", sans-serif;
+		font-weight: 300;
+		font-size: 40px;
+		color: #080808;
+		-webkit-transition: all 0.4s ease 0s;
+		-o-transition: all 0.4s ease 0s;
+		transition: all 0.4s ease 0s;
+	}
+
+		h1 span {
+			display: block;
+			font-size: 0.5em;
+			line-height: 1.3;
+		}
+
+		h1 em {
+			font-style: normal;
+			font-weight: 600;
+		}
+
+	.alt-two h1 {
+		text-align: center;
+	}
+
+		.alt-two h1:before {
+			left: 50%;
+			margin-left: -30px;
+		}
+
+	.two h1 {
+		text-transform: capitalize;
+	}
+
+		.two h1:before {
+			position: absolute;
+			left: 45%;
+			bottom: 0;
+			width: 200px;
+			height: 2px;
+			content: "";
+			background-color: #c50000;
+		}
+
+		.two h1 span {
+			font-size: 13px;
+			font-weight: 500;
+			text-transform: uppercase;
+			letter-spacing: 4px;
+			line-height: 3em;
+			padding-left: 0.25em;
+			color: rgba(0, 0, 0, 0.4);
+			padding-bottom: 10px;
+		}
+</style>
+<div class="nav-item px-3">
+	<NavLink class="nav-link" href="login">
+		<span class="oi oi-list-rich" aria-hidden="true"></span>Back to login
+	</NavLink>
+</div>
+<hr />
+<div class="container mt-1">
+	<div class="row mt-1">
+		<div class="col-md-8">
+			<div class="card ">
+				<div class="card-body">
+
+					<form method="post">
+
+						<div class="form-group bg-grey">
+							<h4 class="font-800  p-2 border">User Register</h4>
+							<hr />
+
+							<div class="form-group row p-2">
+								<label> Username</label>
+								<div class="col-md-9">
+									<input placeholder="" @bind="userName" class="form-control" />
+								</div>
+							</div>
+
+							<div class="form-group row p-2">
+								<label> Password </label>
+								<div class="col-md-9">
+									<input type="password" placeholder="" @bind="Password" class="form-control" />
+								</div>
+							</div>
+							<div class="form-group row p-3">
+								<div class="col-md-3"></div>
+								<div class="col-md-9">
+
+									<button class="btn btn-primary" @onclick="createUser">Save</button>
+
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	EmployeeDetail userDetail = new EmployeeDetail();
+	string userName;
+	string Password;
+	
+	private async void createUser()
+	{
+	if (!string.IsNullOrEmpty(userName)&&!string.IsNullOrEmpty(Password))
+		{
+			userDetail.FullName = userName;
+			userDetail.Password = Password;
+			var result=userDetails.CreateEmployeeAsync(userDetail);
+			if (result)
+			{
+			 await	App.Current.MainPage.DisplayAlert("Save", "User created", "OK");
+			}
+			else
+			{
+			await	App.Current.MainPage.DisplayAlert("Save", "Error in create user!", "OK");
+
+			}
+		}
+	}
+	private DepartmentDetail[] departments;
+
+}

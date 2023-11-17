@@ -1,0 +1,43 @@
+﻿@page "/mainlayout"
+@inherits LayoutComponentBase
+@using MauiDesktopApplicaton.Data
+@inject LoginController loginDetails
+@inject NavigationManager NavManager
+<div class="page">
+	<div class="sidebar">
+		<NavMenu />
+	</div>
+
+	<main>
+		<div class="top-row px-4">
+			<button @onclick="onLogoutClick" disabled=@hidden>Logout</button>
+		</div>
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
+</div>
+
+@code {
+	bool hidden = true;
+	private void onLogoutClick()
+	{
+		hidden = true;
+		loginDetails.ResetAll();
+		NavManager.NavigateTo("/login");
+	}
+	protected override void OnInitialized()
+	{
+		if (!loginDetails.IsLoggedIn)
+		{
+			hidden = true;
+			loginDetails.IsLoggedIn = false;
+			NavManager.NavigateTo("/login");
+		}
+		else
+		{
+			hidden = false;
+			NavManager.NavigateTo("/index");
+		}
+	}
+}

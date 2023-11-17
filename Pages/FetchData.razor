@@ -1,0 +1,71 @@
+﻿@page "/fetchdata"
+
+@using MauiDesktopApplicaton.Data
+@using MauiDesktopApplicaton.EntityModel
+@inject EmployeeController employeeDetails
+@inject LoginController loginDetails
+@inject NavigationManager NavManager
+
+<div class="nav-item px-3">
+	<NavLink class="nav-link" href="create">
+		<span class="oi oi-plus" aria-hidden="true"></span> Create New
+	</NavLink>
+</div>
+<hr />
+<h3>Employee Details</h3>
+
+@if (forecasts == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Employee Name</th>
+				<th>Address</th>
+				<th>Contact</th>
+				<th>Email</th>
+				<th>Designation</th>
+				<th>DateOfJoin</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var forecast in forecasts)
+			{
+				<tr>
+					<td>@forecast.FullName</td>
+					<td>@forecast.Address</td>
+					<td>@forecast.Contact</td>
+					<td>@forecast.Email</td>
+					<td>@forecast.Designation</td>
+					<td>@forecast.DateOfJoin</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private EmployeeDetail[] forecasts;
+
+	protected override async Task OnInitializedAsync()
+	{try
+		{ //Check if current component is callled by logined user
+				//if user not login, redirect to login page
+			if (!loginDetails.IsLoggedIn)
+			{
+				NavManager.NavigateTo("login");
+			}
+			//else
+			{
+				forecasts = await employeeDetails.GetAllEmployeesAsync();
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+	}
+}

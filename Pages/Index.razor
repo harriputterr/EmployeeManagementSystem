@@ -1,0 +1,23 @@
+﻿@page "/index"
+@using MauiDesktopApplicaton.Data
+@inject EmployeeController employeeDetails
+@inject LoginController loginDetails
+@inject NavigationManager NavManager
+<h1>Hello @loginDetails.GetLoginUser()</h1>
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			if (!loginDetails.IsLoggedIn)
+			{
+				NavManager.NavigateTo("login");
+			}
+		}
+		catch (Exception e)
+		{
+
+		}
+	}
+}
